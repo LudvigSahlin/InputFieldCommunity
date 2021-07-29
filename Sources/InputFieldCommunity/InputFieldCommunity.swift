@@ -18,16 +18,13 @@ public class InputFieldCommunity: InputFieldNeighborhoodDelegate {
         return true
     }
 
-    private var lastTime = Date()
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String, neighborhood: InputFieldNeighborhood) -> Bool {
-        // If this function is called twice in a short interval, it is likelly the cause of an autofill.
-        // Thus wait for the autofill to complete, then go to the next neighborhood.
-        if Date().timeIntervalSince(lastTime) < 0.1 {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        // If more than one character is added at once it likely means the user is either pasting or using autofill. Either way, go to next textField.
+        if string.count > 1 {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
                 self.goToNeighborhoodAfter(neighborhood)
             }
         }
-        lastTime = Date()
         return true
     }
 
